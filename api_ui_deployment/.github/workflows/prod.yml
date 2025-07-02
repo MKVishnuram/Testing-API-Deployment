@@ -1,0 +1,30 @@
+name: Promote to Prod
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Image tag to deploy'
+        required: true
+
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Configure AWS
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-region: ap-south-1
+
+
+      - name: Deploy to Prod with Terraform
+        run: |
+          cd terraform/prod
+          terraform init
+          terraform apply -auto-approve -var="image_tag=${{ github.event.inputs.version }}"

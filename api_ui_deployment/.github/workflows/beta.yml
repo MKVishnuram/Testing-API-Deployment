@@ -1,0 +1,36 @@
+name: Promote to Beta
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+
+    env:
+      AWS_REGION: us-east-1
+      ECR_REPO_NAME: fastapi-app
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Configure AWS
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-region: ap-south-1
+
+
+      - name: Deploy backend to ECS
+        run: |
+          IMAGE_TAG=dev-${{ github.event.release.tag_name }}
+          cd terraform/beta
+          terraform init
+          terraform apply -auto-approve -var="image_tag=$IMAGE_TAG"
+
+      - name: Deploy frontend to S3
+        run: |
+          aws s3 cp frontend/index.html s3://myapp-beta/ --acl public-read

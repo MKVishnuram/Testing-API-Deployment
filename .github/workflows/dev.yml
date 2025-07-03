@@ -34,7 +34,7 @@ jobs:
       - name: Build and tag Docker image
         run: |
           IMAGE_TAG=dev-${{ github.sha }}
-          docker build -t $ECR_REPO_NAME:$IMAGE_TAG backend/
+          docker build -t $ECR_REPO_NAME:$IMAGE_TAG api_ui_deployment/backend/
           docker tag my-app:$IMAGE_TAG \
             $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/my-app:$IMAGE_TAG
 

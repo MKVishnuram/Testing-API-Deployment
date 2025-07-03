@@ -16,7 +16,6 @@ jobs:
       AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
       ECR_REPO_NAME: fastapi-app
 
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -31,7 +30,17 @@ jobs:
 
       - name: Deploy to Prod with Terraform
         run: |
-          echo "Deploying image tag: ${{ github.event.inputs.version }}"
+          IMAGE_TAG=${{ github.event.inputs.version }}
+          echo "Deploying image tag: $IMAGE_TAG"
           cd terraform/prod
           terraform init
-          terraform apply -auto-approve -var="image_tag=${{ github.event.inputs.version }}"
+          terraform apply -auto-approve \
+            -var="image_tag=$IMAGE_TAG" \
+            -var="execution_role_arn=${{ secrets.ECS_EXECUTION_ROLE }}" \
+            -var="task_role_arn=${{ secrets.ECS_TASK_ROLE }}" \
+            -var="aws_region=${{ env.AWS_REGION }}" \
+            -var="aws_account_id=${{ secrets.AWS_ACCOUNT_ID }}"
+
+      - name: Deploy frontend to S3
+        run: |
+          aws s3 cp frontend/index.html s3://commversemyapp-prod

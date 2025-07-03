@@ -57,5 +57,5 @@ jobs:
 
       - name: Deploy frontend to S3
         run: |
-          aws s3 cp frontend/index.html s3://myapp-dev --acl public-read
+          aws s3 cp frontend/index.html s3://myapp-dev-1 --acl public-read
 

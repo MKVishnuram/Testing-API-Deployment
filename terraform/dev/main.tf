@@ -23,7 +23,7 @@ data "aws_security_groups" "default" {
 module "ecs" {
   source              = "../modules/ecs"
   env                 = "dev"
-  service_name        = "fastapi-app-dev"
+  service_name        = "fastapi-app-${timestamp()}"
   image_tag           = var.image_tag
   aws_region          = var.aws_region           # ✅ add this
   aws_account_id      = var.aws_account_id       # ✅ add this

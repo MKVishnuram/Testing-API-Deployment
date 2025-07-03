@@ -58,3 +58,4 @@ jobs:
       - name: Deploy frontend to S3
         run: |
           aws s3 cp frontend/index.html s3://commversemyapp-dev
+          

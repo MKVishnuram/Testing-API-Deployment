@@ -1,5 +1,13 @@
-variable "instance_type" {
-  type = string                     # The type of the variable, in this case a string
-  default = "t2.micro"                 # Default value for the variable
-  description = "The type of EC2 instance" # Description of what this variable represents
+variable "env" {}
+variable "service_name" {}
+variable "image_tag" {}
+variable "execution_role_arn" {}
+variable "task_role_arn" {}
+variable "subnets" {
+  type = list(string)
 }
+variable "security_groups" {
+  type = list(string)
+}
+variable "aws_region" {}
+variable "aws_account_id" {}

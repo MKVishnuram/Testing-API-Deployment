@@ -8,3 +8,17 @@ module "ecs" {
   subnets          = var.subnets
   security_groups  = var.security_groups
 }
+
+variable "image_tag" {
+  description = "Docker image tag to deploy"
+  type        = string
+}
+variable "execution_role_arn" {
+  description = "IAM Role ARN for ECS Execution"
+  type        = string
+}
+
+variable "task_role_arn" {
+  description = "IAM Role ARN for ECS Task"
+  type        = string
+}

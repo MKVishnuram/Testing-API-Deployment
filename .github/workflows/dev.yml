@@ -42,6 +42,12 @@ jobs:
       - name: Push Docker Image
         run: docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO_NAME:$IMAGE_TAG
 
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.6.6
+
       - name: Deploy backend to ECS using Terraform
         run: |
           cd terraform/dev

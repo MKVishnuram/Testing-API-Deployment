@@ -18,3 +18,9 @@ variable "task_role_arn" {
   description = "IAM Role ARN for ECS Task"
   type        = string
 }
+
+
+variable "aws_account_id" {
+  description = "AWS account ID"
+  type        = string
+}

@@ -55,6 +55,7 @@ jobs:
           terraform apply -auto-approve \
             -var="image_tag=$IMAGE_TAG" \
             -var="aws_region=${{ env.AWS_REGION }}" \
+            -var="aws_account_id=${{ secrets.AWS_ACCOUNT_ID }}" \
             -var="execution_role_arn=${{ secrets.ECS_EXECUTION_ROLE }}" \
             -var="task_role_arn=${{ secrets.ECS_TASK_ROLE }}"
 

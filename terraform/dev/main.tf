@@ -25,8 +25,11 @@ module "ecs" {
   env                 = "dev"
   service_name        = "fastapi-app"
   image_tag           = var.image_tag
+  aws_region          = var.aws_region           # ✅ add this
+  aws_account_id      = var.aws_account_id       # ✅ add this
   execution_role_arn  = var.execution_role_arn
   task_role_arn       = var.task_role_arn
   subnets             = data.aws_subnets.default.ids
   security_groups     = [data.aws_security_groups.default.ids[0]]
 }
+

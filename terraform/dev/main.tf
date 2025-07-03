@@ -40,13 +40,3 @@ module "frontend_s3" {
 }
 
 
-
-variable "site_name" {
-  description = "Base name of the S3 site"
-  type        = string
-}
-
-variable "env" {
-  description = "Environment name (e.g., dev, prod)"
-  type        = string
-}

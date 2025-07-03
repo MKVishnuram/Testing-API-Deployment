@@ -35,8 +35,8 @@ module "ecs" {
 
 module "frontend_s3" {
   source    = "../modules/s3_static_site"
-  site_name = "myapp"
-  env       = "dev"
+  site_name = "testingmyapp"
+  env       = "commversemyapp"
 }
 
 

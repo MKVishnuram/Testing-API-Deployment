@@ -33,3 +33,20 @@ module "ecs" {
   security_groups     = [data.aws_security_groups.default.ids[0]]
 }
 
+module "frontend_s3" {
+  source    = "../modules/s3_static_site"
+  site_name = "myapp"
+  env       = "dev"
+}
+
+
+
+variable "site_name" {
+  description = "Base name of the S3 site"
+  type        = string
+}
+
+variable "env" {
+  description = "Environment name (e.g., dev, prod)"
+  type        = string
+}

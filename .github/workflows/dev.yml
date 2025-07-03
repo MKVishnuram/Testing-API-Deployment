@@ -25,39 +25,35 @@ jobs:
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
           aws-region: ${{ env.AWS_REGION }}
 
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.6.6
+
+      - name: Deploy backend infra using Terraform
+        run: |
+          cd terraform/dev
+          terraform init
+          terraform apply -auto-approve \
+            -var="image_tag=placeholder" \
+            -var="execution_role_arn=${{ secrets.ECS_EXECUTION_ROLE }}" \
+            -var="task_role_arn=${{ secrets.ECS_TASK_ROLE }}" \
+            -var="aws_region=${{ env.AWS_REGION }}" \
+            -var="aws_account_id=${{ secrets.AWS_ACCOUNT_ID }}"
+
       - name: Login to Amazon ECR
         run: |
           aws ecr get-login-password --region $AWS_REGION \
             | docker login --username AWS \
             --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
 
-      - name: Build Docker Image
+      - name: Build & Push Docker Image
         run: |
           IMAGE_TAG=dev-${{ github.sha }}
           docker build -t $ECR_REPO_NAME:$IMAGE_TAG backend/
-          docker tag $ECR_REPO_NAME:$IMAGE_TAG ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO_NAME:$IMAGE_TAG
+          docker tag $ECR_REPO_NAME:$IMAGE_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO_NAME:$IMAGE_TAG
+          docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO_NAME:$IMAGE_TAG
           echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
-      
-
-      - name: Push Docker Image
-        run: docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO_NAME:$IMAGE_TAG
-
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: 1.6.6
-
-      - name: Deploy backend to ECS using Terraform
-        run: |
-          cd terraform/dev
-          terraform init
-          terraform apply -auto-approve \
-            -var="image_tag=$IMAGE_TAG" \
-            -var="aws_region=${{ env.AWS_REGION }}" \
-            -var="aws_account_id=${{ secrets.AWS_ACCOUNT_ID }}" \
-            -var="execution_role_arn=${{ secrets.ECS_EXECUTION_ROLE }}" \
-            -var="task_role_arn=${{ secrets.ECS_TASK_ROLE }}"
 
       - name: Deploy frontend to S3
         run: |
